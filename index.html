@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VTuber 物料仓储快递系统</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap');
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        header {
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin: 15px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        button {
+            background: #ff4081;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        input, select {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 100%;
+            margin: 8px 0;
+        }
+        .tab { display: none; }
+        .active { display: block; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🌸 VTuber 物料仓储快递系统</h1>
+        <p>虚拟主播周边 · 三端分离物流平台</p>
+    </header>
+
+    <div class="container">
+        <!-- 登录页面 -->
+        <div id="loginPage" class="card">
+            <h2>系统登录</h2>
+            <input type="text" id="username" placeholder="用户名">
+            <input type="password" id="password" placeholder="密码">
+            <button onclick="login()" style="width:100%;">登录</button>
+            <p style="margin-top:20px; font-size:14px; color:#666; text-align:center;">
+                测试账号：<br>
+                👤 用户 → <b>user1</b> / 123456<br>
+                🎤 主播 → <b>streamer1</b> / 123456<br>
+                ⚙️ 管理员 → <b>admin</b> / admin123
+            </p>
+        </div>
+
+        <!-- 主界面 -->
+        <div id="mainPage" class="tab">
+            <div class="card">
+                <h2>欢迎，<span id="welcomeName"></span>！</h2>
+                <button onclick="showTab('query')">📦 快递查询</button>
+                <button onclick="showTab('orders')">📋 我的订单</button>
+                <button onclick="logout()" style="background:#666;">退出登录</button>
+            </div>
+
+            <!-- 快递查询 -->
+            <div id="query" class="tab active card">
+                <h3>快递查询</h3>
+                <input type="text" id="trackingNo" placeholder="请输入快递单号">
+                <button onclick="queryExpress()" style="width:100%;">查询物流</button>
+                <div id="queryResult" style="margin-top:20px;"></div>
+            </div>
+
+            <!-- 订单列表 -->
+            <div id="orders" class="tab card">
+                <h3>我的订单</h3>
+                <div id="orderList">加载中...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = { role: '', name: '' };
+
+        function login() {
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+
+            if (user === 'user1' && pass === '123456') {
+                currentUser = { role: '用户', name: 'user1' };
+            } else if (user === 'streamer1' && pass === '123456') {
+                currentUser = { role: '主播', name: 'streamer1' };
+            } else if (user === 'admin' && pass === 'admin123') {
+                currentUser = { role: '管理员', name: 'admin' };
+            } else {
+                alert('账号或密码错误！');
+                return;
+            }
+
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('mainPage').classList.add('active');
+            document.getElementById('welcomeName').textContent = currentUser.role + ' (' + currentUser.name + ')';
+            
+            loadOrders();
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        function queryExpress() {
+            const no = document.getElementById('trackingNo').value.trim();
+            if (!no) return alert('请输入快递单号');
+
+            const result = document.getElementById('queryResult');
+            result.innerHTML = `
+                <p><strong>单号：</strong> ${no}</p>
+                <p><strong>当前状态：</strong> <span style="color:green;">已签收</span></p>
+                <p><strong>物料：</strong> 限定手办 + 直播服装 + 3D道具</p>
+                <p><strong>物流时间线：</strong></p>
+                <ul>
+                    <li>2026-05-25 10:00 已揽收（上海仓）</li>
+                    <li>2026-05-26 14:30 运输中</li>
+                    <li>2026-05-27 09:15 已签收</li>
+                </ul>
+            `;
+        }
+
+        function loadOrders() {
+            const list = document.getElementById('orderList');
+            list.innerHTML = `
+                <p>订单1：手办限定版 - 已签收</p>
+                <p>订单2：直播服装 - 运输中</p>
+                <p>订单3：3D打印道具 - 已揽收</p>
+            `;
+        }
+
+        function logout() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
